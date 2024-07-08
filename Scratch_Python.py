@@ -4,6 +4,18 @@ import webbrowser
 import requests
 import time
 
+#----COORDENADAS_MOUSE-------
+print('Press Ctrl-C to quit.')
+try:
+    while True:
+        x, y = pyautogui.position()
+        positionStr = 'X: ' + str(x).rjust(4) + ' Y: ' + str(y).rjust(4)
+        print(positionStr, end='')
+        print('\b' * len(positionStr), end='', flush=True)
+except KeyboardInterrupt:
+    print('\n')
+#---------------------------
+
 x, y = 891, 151
 
 pyautogui.moveTo(x, y)
