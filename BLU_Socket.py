@@ -1,12 +1,19 @@
 import socket as sk
-import bleak 
-from bleak import BleakScanner
+#import bleak 
+#from bleak import BleakScanner
+import serial
 
-async def achar_porta():
-      portas = await BleakScanner.discover()
-      for porta in portas:
-          print(f"encontrado: {porta.name} - {porta.address}")  
+s = serial.Serial('COM5', 9600, timeout = 1)
+blu = s.in_waiting()
 
-StopAsyncIteration()
+#---LOOP--------------
+while True:
+      s.write(b"Ola, Arduino")
+      if blu > 0:
+         s.write("Algo foi detectado")
+      else:
+           s.readline()
+           print("Nada foi encontrado")
 
-#sk.AF_BLUETOOTH()
+           break
+s.flush()
