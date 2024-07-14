@@ -1,0 +1,58 @@
+import sys
+import os
+import time 
+import bpy
+import bmesh
+import cv2
+
+# Adicionar o caminho do site-packages do Python do sistema
+sys.path.append(r'C:\Users\marce\AppData\Roaming\Python\Python312\site-packages')
+
+#-----------------------------------------------
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete(use_global=False)
+bpy.ops.mesh.primitive_cube_add(size=2, location=(0, 0, 0))
+cubo = bpy.context.active_object
+cubo.location = (3, 3, 3)
+#-----------------------------------------------
+
+# Configuração do OpenCV
+rosto = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+    print("Não foi possível abrir a câmera")
+    exit()
+
+while True:
+    ret, frame = cap.read()
+
+    if not ret:
+        print("Não foi possível receber a imagem...")
+        break
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # Detecção de rosto
+    leitura_rosto = rosto.detectMultiScale(gray, 1.1, 8)
+    
+    for (rx, ry, rw, rh) in leitura_rosto:
+        img_rosto = cv2.rectangle(frame, (rx, ry), (rx + rw, ry + rh), (255, 0, 0), 2)
+        cinza = gray[ry:ry + rh, rx:rx + rw]
+    
+    # Verifica se há rostos detectados
+    if len(leitura_rosto) > 0:
+        bpy.ops.object.select_all(action='SELECT')
+        bpy.ops.object.delete(use_global=False)
+        
+        bpy.ops.mesh.primitive_cube_add(size=2, location=(5, 5, 5))
+
+    # Mostra a imagem com a detecção de rosto
+    cv2.imshow('img_rosto', frame)
+
+    # Fecha a janela se pressionar 'f'
+    if cv2.waitKey(1) == ord('f'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
